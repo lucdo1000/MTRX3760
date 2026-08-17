@@ -68,6 +68,25 @@ class CMotor
     double mSpeed;          // current speed, -1.0 to 1.0
 };
 
+//----CBattery------------------------------------------------------------------
+// holds the battery's charge level.
+class CBattery
+{
+  public:
+    // Creates a battery fully charged.
+    CBattery()
+      : mCharge( 100.0 ){}
+
+    // GetCharge returns the current charge level.
+    double GetCharge() const;
+
+    // Drain reduces the charge level by 1.0, to a minimum of 0.0.
+    void Drain();
+
+  private:
+    double mCharge;         // 0-100%
+};
+
 //---CRobot--------------------------------------------------------------------
 // A CRobot has a line sensor, a controller, and two drive motors. It offers
 // operations described in terms of the whole robot rather than its parts.
@@ -88,6 +107,7 @@ class CRobot
     CController mController;
     CMotor mLeftMotor;
     CMotor mRightMotor;
+    CBattery mBattery;
 };
 
 //---main----------------------------------------------------------------------
@@ -165,8 +185,16 @@ void CRobot::Update()
   int error = mSensor.Read();
   double steering = mController.ComputeSteering( error );
 
-  mLeftMotor.SetSpeed( BaseSpeed + steering );
-  mRightMotor.SetSpeed( BaseSpeed - steering );
+  double forward = BaseSpeed;
+  if( mBattery.GetCharge() < 80.0 )
+  {
+    forward = 0.25;  // slow down if battery is low
+  }
+
+  mLeftMotor.SetSpeed( forward + steering );
+  mRightMotor.SetSpeed( forward - steering );
+
+  mBattery.Drain();
 }
 //---
 void CRobot::Report()
@@ -175,4 +203,18 @@ void CRobot::Report()
   std::cout << ", ";
   mRightMotor.Report();
   std::cout << std::endl;
+}
+
+void CBattery::Drain()
+{
+  mCharge -= 1.0;
+  if( mCharge < 0.0 )
+  {
+    mCharge = 0.0;
+  }
+}
+
+double CBattery::GetCharge() const
+{
+  return mCharge;
 }
