@@ -38,17 +38,25 @@ struct SMotor
   double speed;           // current speed, -1.0 to 1.0
 };
 
+// ----SBattery------------------------------------------------------------------
+// SBattery holds the battery's charge level.
+struct SBattery
+{
+  double charge;         // 0-100%
+};
+
 //---Function declarations-----------------------------------------------------
 void InitLineSensor( SLineSensor* apSensor );
 void InitController( SController* apController );
 void InitMotor( SMotor* apMotor, const char* aName );
+void InitBattery( SBattery* apBattery );
 
 int ReadLineSensor( SLineSensor* apSensor );
 double ComputeSteering( SController* apController, int aError );
 void SetMotorSpeed( SMotor* apMotor, double aSpeed );
 
 void UpdateRobot( SLineSensor* apSensor, SController* apController,
-                  SMotor* apLeftMotor, SMotor* apRightMotor );
+                  SMotor* apLeftMotor, SMotor* apRightMotor, SBattery* apBattery );
 void ReportRobot( SMotor* apLeftMotor, SMotor* apRightMotor );
 
 //---main----------------------------------------------------------------------
@@ -60,15 +68,17 @@ int main()
   SController controller;
   SMotor leftMotor;
   SMotor rightMotor;
+  SBattery battery;
 
   InitLineSensor( &sensor );
   InitController( &controller );
   InitMotor( &leftMotor, "Left" );
   InitMotor( &rightMotor, "Right" );
+  InitBattery( &battery );
 
   for( int i = 0; i < NumCycles; ++i )
   {
-    UpdateRobot( &sensor, &controller, &leftMotor, &rightMotor );
+    UpdateRobot( &sensor, &controller, &leftMotor, &rightMotor, &battery );
     ReportRobot( &leftMotor, &rightMotor );
   }
 
@@ -95,6 +105,13 @@ void InitMotor( SMotor* apMotor, const char* aName )
 {
   apMotor->pName = aName;
   apMotor->speed = 0.0;
+}
+
+// InitBattery----------------------------------------------------------------
+// Starts the battery fully charged.
+void InitBattery( SBattery* apBattery )
+{
+  apBattery->charge = 100.0;
 }
 
 //---ReadLineSensor------------------------------------------------------------
@@ -131,13 +148,22 @@ void SetMotorSpeed( SMotor* apMotor, double aSpeed )
 //---UpdateRobot---------------------------------------------------------------
 // Runs one cycle: read the sensor, work out the steering, and set both motors.
 void UpdateRobot( SLineSensor* apSensor, SController* apController,
-                  SMotor* apLeftMotor, SMotor* apRightMotor )
+                  SMotor* apLeftMotor, SMotor* apRightMotor, SBattery* apBattery )
 {
   int error = ReadLineSensor( apSensor );
   double steering = ComputeSteering( apController, error );
 
-  SetMotorSpeed( apLeftMotor, BaseSpeed + steering );
-  SetMotorSpeed( apRightMotor, BaseSpeed - steering );
+  // If the battery is low, slow down the robot.
+  double forward = BaseSpeed;
+  if( apBattery->charge < 80.0 )
+  {
+    forward = 0.25;  // slow down if battery is low
+  }
+
+  SetMotorSpeed( apLeftMotor, forward + steering );
+  SetMotorSpeed( apRightMotor, forward - steering );
+
+  apBattery->charge -= 1.0;  // battery drains each cycle
 }
 
 //---ReportRobot---------------------------------------------------------------
