@@ -10,6 +10,9 @@
 #include <iostream>
 #include <string>
 
+//--Constants-------------------------------------------------------------------
+const int TEMPFACTOR = 10;
+
 //---COven---------------------------------------------------------------------
 // COven holds an oven's name and current temperature. The temperature is
 // private: callers change and inspect it only through the functions below.
@@ -62,21 +65,21 @@ int main()
 //---COven Implementation------------------------------------------------------
 COven::COven( const std::string& aName )
   : mName( aName ),
-    mTemperatureC( 20 )                 // start at room temperature
+    mTemperatureC( 20*TEMPFACTOR )                 // start at room temperature, 20 degrees
 {
 }
 //---
 void COven::WarmUp()
 {
-  mTemperatureC += 1;                   // warm up by one degree
+  mTemperatureC += (1*TEMPFACTOR);                   // warm up by one degree
 }
 //---
 bool COven::IsOverheating()
 {
-  return mTemperatureC >= 250;          // overheating limit is 250 C
+  return mTemperatureC >= (250*TEMPFACTOR);          // overheating limit is 250 C, TEMPFACTOR 
 }
 //---
 void COven::Report()
 {
-  std::cout << mName << " is at " << mTemperatureC << "C" << std::endl;
+  std::cout << mName << " is at " << mTemperatureC/TEMPFACTOR << "." << mTemperatureC % TEMPFACTOR << "C" << std::endl;
 }

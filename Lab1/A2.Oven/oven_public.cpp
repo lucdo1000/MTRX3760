@@ -10,6 +10,9 @@
 #include <iostream>
 #include <string>
 
+//--Constants-------------------------------------------------------------------
+const int TEMPFACTOR = 10;
+
 //---COven---------------------------------------------------------------------
 // COven holds an oven's name and current temperature. Both members are public,
 // so any code can read or change them directly.
@@ -28,29 +31,29 @@ int main()
 {
   COven ReflowOven;
   ReflowOven.mName = "Reflow oven";
-  ReflowOven.mTemperatureC = 20;            // start at room temperature
+  ReflowOven.mTemperatureC = (20*TEMPFACTOR);            // start at room temperature
 
   COven CuringOven;
   CuringOven.mName = "Curing oven";
-  CuringOven.mTemperatureC = 20;            // start at room temperature
+  CuringOven.mTemperatureC = (20*TEMPFACTOR);            // start at room temperature
 
   for( int i = 0; i < 5; ++i )
-    ReflowOven.mTemperatureC += 1;          // warm up by one degree
+    ReflowOven.mTemperatureC += (1*TEMPFACTOR);          // warm up by one degree
 
   for( int i = 0; i < 8; ++i )
-    CuringOven.mTemperatureC += 1;          // warm up by one degree
+    CuringOven.mTemperatureC += (1*TEMPFACTOR);          // warm up by one degree
 
-  if( ReflowOven.mTemperatureC >= 250 )     // overheating limit is 250 C
+  if( ReflowOven.mTemperatureC >= (250*TEMPFACTOR) )     // overheating limit is 250 C
     std::cout << "Warning: oven is overheating!" << std::endl;
 
-  if( CuringOven.mTemperatureC >= 250 )     // overheating limit is 250 C
+  if( CuringOven.mTemperatureC >= (250*TEMPFACTOR) )     // overheating limit is 250 C
     std::cout << "Warning: oven is overheating!" << std::endl;
 
   std::cout << ReflowOven.mName << " is at "
-            << ReflowOven.mTemperatureC << "C" << std::endl;
+            << ReflowOven.mTemperatureC / TEMPFACTOR << "." << ReflowOven.mTemperatureC % TEMPFACTOR << "C" << std::endl;
 
   std::cout << CuringOven.mName << " is at "
-            << CuringOven.mTemperatureC << "C" << std::endl;
+            << CuringOven.mTemperatureC / TEMPFACTOR << "." << CuringOven.mTemperatureC % TEMPFACTOR << "C" << std::endl;
 
   return 0;
 }
