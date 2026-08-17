@@ -55,6 +55,19 @@ class CLed : public CDevice
     int mBrightness;
 };
 
+//----CHeater-------------------------------------------------------------------
+// A CHeater is a device whose power draw grows with its temperature setting.
+class CHeater : public CDevice
+{
+  public:
+    CHeater ( const std::string& aName );
+    void SetTemp( int aTemp );  // set the heater's temperature
+    int PowerDraw();            // power drawn, in watts
+
+  private:
+    int mSetting;
+};
+
 //---main----------------------------------------------------------------------
 // Sets up a motor and an LED, then prints each device's power draw and the
 // running total.
@@ -67,6 +80,10 @@ int main()
   CLed statusLed( "StatusLed" );
   statusLed.SetBrightness( 50 );
 
+  CHeater cabinHeater( "CabinHeater" );
+  cabinHeater.TurnOn();
+  cabinHeater.SetTemp( 40 );
+
   int total = 0;
 
   int motorDraw = driveMotor.PowerDraw();
@@ -76,6 +93,10 @@ int main()
   int ledDraw = statusLed.PowerDraw();
   std::cout << statusLed.GetName() << ": " << ledDraw << " W" << std::endl;
   total += ledDraw;
+
+  int heaterDraw = cabinHeater.PowerDraw();
+  std::cout << cabinHeater.GetName() << ": " << heaterDraw << " W" << std::endl;
+  total += heaterDraw;
 
   std::cout << "Total: " << total << " W" << std::endl;
 
@@ -141,4 +162,21 @@ void CLed::SetBrightness( int aBrightness )
 int CLed::PowerDraw()
 {
   return IsOn() ? mBrightness / 10 : 0;
+}
+
+//---CHeater Implementation----------------------------------------------------
+CHeater::CHeater( const std::string& aName )
+  : CDevice( aName ),
+    mSetting( 0 )
+{
+}
+//---
+void CHeater::SetTemp( int aTemp )
+{
+  mSetting = aTemp;
+}
+//---
+int CHeater::PowerDraw()
+{
+  return IsOn() ? mSetting * 3 : 0;
 }
