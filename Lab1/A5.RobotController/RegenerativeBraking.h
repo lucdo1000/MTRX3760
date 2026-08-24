@@ -1,3 +1,11 @@
+// RegenerativeBraking.h
+//
+// Header file for the robot's regenerative braking system. This is the
+// only subsystem that talks to the other two directly (it holds a
+// DriveMotor* and a BatteryMonitor*) — see RegenerativeBraking.cpp for
+// why that coupling belongs here rather than in DriveMotor or
+// BatteryMonitor.
+
 #ifndef REGENERATIVEBRAKING_H
 #define REGENERATIVEBRAKING_H
 
@@ -6,6 +14,7 @@
 #include "BatteryMonitor.h"
 #include <iostream>
 
+//---------------------------------------------------------------
 // Decides, every cycle, whether the robot drives or brakes — it's the only
 // subsystem that reads the motor's speed, so it's the natural place for
 // that call to live. On a drive cycle it tells the motor to accelerate and
@@ -14,6 +23,9 @@
 class RegenerativeBraking : public ISubsystem
 {
 public:
+    // Does not take ownership of motor/battery — Controller/main.cpp
+    // still own the DriveMotor and BatteryMonitor objects; we just get
+    // pointers so we can read and command them.
     RegenerativeBraking(DriveMotor* motor, BatteryMonitor* battery);
 
     void Run() override;
@@ -31,11 +43,11 @@ private:
     // way it could if accelerating and braking both applied in one cycle.
     static const int kEngageSpeed = 15;
     static const int kDisengageSpeed = 5;
-    static const int kBrakeStrength = 10;
+    static const int kBrakeStrength = 10;   // speed lost per Brake() call while active
 
-    DriveMotor* mMotor;
-    BatteryMonitor* mBattery;
-    bool mActive;
+    DriveMotor* mMotor;       // the motor we read speed from and command
+    BatteryMonitor* mBattery; // the battery we drain or charge each cycle
+    bool mActive;             // true while braking (hysteresis state)
 };
 
 #endif

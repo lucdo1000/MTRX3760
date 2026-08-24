@@ -1,10 +1,16 @@
+// BatteryMonitor.cpp
+//
+// Implementation file for the robot's battery.
+
 #include "BatteryMonitor.h"
 
+//---------------------------------------------------------------
 BatteryMonitor::BatteryMonitor()
     : mLevel(100), mLastDrain(0), mLastCharge(0)
 {
 }
 
+//---------------------------------------------------------------
 void BatteryMonitor::Run()
 {
     // Battery level only changes via Drain() / Charge(), called by
@@ -12,9 +18,13 @@ void BatteryMonitor::Run()
     // cycle or a braking cycle. Nothing to do here on our own.
 }
 
+//---------------------------------------------------------------
 void BatteryMonitor::Report()
 {
     std::cout << "Battery: ";
+    // mLastCharge and mLastDrain can't both be nonzero (each of Drain()/
+    // Charge() below zeroes the other), so exactly one of these branches
+    // fires — this always names the thing that actually happened.
     if(mLastCharge > 0)
         std::cout << "+" << mLastCharge << "% regen charge";
     else if(mLastDrain > 0)
@@ -24,28 +34,32 @@ void BatteryMonitor::Report()
     std::cout << " -> " << mLevel << "%" << std::endl;
 }
 
+//---------------------------------------------------------------
 void BatteryMonitor::Drain(int motorSpeed)
 {
     int before = mLevel;
-    int drain = 5;
-    drain += motorSpeed / 5;   // every +5 speed adds +1 drain
+    int drain = 5;              // base drain, just for being switched on
+    drain += motorSpeed / 5;    // every +5 speed adds +1 drain
 
     mLevel -= drain;
-    if(mLevel < 0) mLevel = 0;
+    if(mLevel < 0) mLevel = 0;   // can't go below empty
 
+    // Recover the real drop (not just drain) in case the floor above
+    // clipped it, so the reported figure matches what really happened.
     mLastDrain = before - mLevel;
     mLastCharge = 0;   // draining and charging can't both happen this cycle
 }
 
+//---------------------------------------------------------------
 void BatteryMonitor::Charge(int speedDrop)
 {
     int before = mLevel;
-    int charge = 2;
-    charge += speedDrop / 10;   // every -10 speed adds +1 charge
+    int charge = 2;               // base regen, just for braking at all
+    charge += speedDrop / 10;     // every -10 speed adds +1 charge
 
     mLevel += charge;
-    if(mLevel > 100) mLevel = 100;
+    if(mLevel > 100) mLevel = 100;   // can't go above full
 
-    mLastCharge = mLevel - before;
+    mLastCharge = mLevel - before;   // same clipping logic as Drain() above
     mLastDrain = 0;
 }

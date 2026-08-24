@@ -1,9 +1,19 @@
+// BatteryMonitor.h
+//
+// Header file for the robot's battery.
+
 #ifndef BATTERYMONITOR_H
 #define BATTERYMONITOR_H
 
 #include "ISubsystem.h"
 #include <iostream>
 
+//---------------------------------------------------------------
+// Tracks the robot's battery percentage. Like DriveMotor, a
+// BatteryMonitor has no idea what caused a change in its own level — it
+// just exposes Drain()/Charge() and applies whichever one is called.
+// RegenerativeBraking is the only thing that calls them, once per cycle,
+// after it has decided whether this is a drive cycle or a braking cycle.
 class BatteryMonitor : public ISubsystem
 {
 public:
@@ -19,7 +29,7 @@ public:
     void Charge(int speedDrop);
 
 private:
-    int mLevel;        // battery percentage
+    int mLevel;        // battery percentage, clamped to [0, 100]
     int mLastDrain;    // this cycle's drain, for reporting (0 if none)
     int mLastCharge;   // this cycle's regen charge, for reporting (0 if none)
 };
