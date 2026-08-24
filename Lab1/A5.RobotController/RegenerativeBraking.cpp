@@ -14,7 +14,7 @@ void RegenerativeBraking::Run()
         int oldSpeed = mMotor->GetSpeed();
 
         // Apply braking
-        mMotor->ReduceSpeed(15);
+        mMotor->ReduceSpeed(10);
 
         int newSpeed = mMotor->GetSpeed();
         int speedDrop = oldSpeed - newSpeed;
