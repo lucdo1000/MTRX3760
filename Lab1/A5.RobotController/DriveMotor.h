@@ -19,6 +19,7 @@ public:
 
 private:
     int mSpeed;
+    int mLastSpeed;
 };
 
 #endif
