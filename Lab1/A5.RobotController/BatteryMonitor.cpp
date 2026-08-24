@@ -1,11 +1,10 @@
 // BatteryMonitor.cpp
-//
 // Implementation file for the robot's battery.
 
 #include "BatteryMonitor.h"
 #include <iostream>
 
-//---BatteryMonitor Implementation------------------------------------
+// Constructor -- Initializes default values
 BatteryMonitor::BatteryMonitor()
     : mLevel(100), mLastDrain(0), mLastCharge(0)
 {
@@ -22,16 +21,15 @@ void BatteryMonitor::Report()
 {
     std::cout << "Battery: ";
 
-    // mLastCharge and mLastDrain can't both be nonzero, so exactly one
-    // of these branches fires
-    if(mLastCharge > 0)
+    // mLastCharge and mLastDrain can't both be nonzero
+    if(mLastCharge > 0)                                         // Prints how much battery regenerates
         std::cout << "+" << mLastCharge << "% regen charge";
-    else if(mLastDrain > 0)
+    else if(mLastDrain > 0)                                     // Prints how much battery drains
         std::cout << "-" << mLastDrain << "% drive drain";
     else
         std::cout << "no change";
 
-    std::cout << " -> " << mLevel << "%" << std::endl;
+    std::cout << " -> " << mLevel << "%" << std::endl;          // Prints battery percentage
 }
 
 void BatteryMonitor::Drain(int motorSpeed)
