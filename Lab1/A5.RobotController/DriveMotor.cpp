@@ -28,7 +28,7 @@ int DriveMotor::GetSpeed() const
     return mSpeed;
 }
 
-int DriveMotor:: GetLastSpeed() const 
+int DriveMotor::GetLastSpeed() const 
 {
     return mLastSpeed;
 }
