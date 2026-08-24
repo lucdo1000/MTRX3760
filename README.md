@@ -1,2 +1,3 @@
 # MTRX3760
-https://copilot.microsoft.com/conversations/join/zSM3TMLMZRtnnjXe736KT
+
+g++ main.cpp Controller.cpp DriveMotor.cpp LineSensor.cpp BatteryMonitor.cpp -o robot
