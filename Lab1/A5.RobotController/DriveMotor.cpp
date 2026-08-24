@@ -5,11 +5,16 @@ DriveMotor::DriveMotor()
 {
 }
 
-void DriveMotor::Run()
+void DriveMotor::Run(bool brakesActive)
 {
     mLastSpeed = mSpeed;
-    mSpeed += 20;   // motor speeds up each cycle
+
+    if(brakesActive)
+        return;   // no acceleration allowed
+
+    mSpeed += 10;
 }
+
 
 void DriveMotor::Report()
 {
