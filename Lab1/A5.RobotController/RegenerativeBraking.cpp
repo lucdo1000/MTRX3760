@@ -9,25 +9,26 @@ void RegenerativeBraking::Run()
 {
     mActive = !mActive;
 
+    // Tell motor whether brakes are active
+    mMotor->Run(mActive);
+
     if(mActive)
     {
         int oldSpeed = mMotor->GetSpeed();
 
-        // Apply braking
-        mMotor->ReduceSpeed(10);
+        mMotor->ReduceSpeed(10);   // braking amount
 
         int newSpeed = mMotor->GetSpeed();
         int speedDrop = oldSpeed - newSpeed;
 
-        // Recharge based on braking strength
         mBattery->RegenCharge(speedDrop);
     }
     else
     {
-        // Normal battery drain based on speed
         mBattery->ProgressiveDrain(mMotor->GetSpeed());
     }
 }
+
 
 
 void RegenerativeBraking::Report()
