@@ -6,14 +6,13 @@
 #define BATTERYMONITOR_H
 
 #include "ISubsystem.h"
-#include <iostream>
 
-//---------------------------------------------------------------
+//---BatteryMonitor Interface---------------------------------------
 // Tracks the robot's battery percentage. Like DriveMotor, a
-// BatteryMonitor has no idea what caused a change in its own level — it
-// just exposes Drain()/Charge() and applies whichever one is called.
-// RegenerativeBraking is the only thing that calls them, once per cycle,
-// after it has decided whether this is a drive cycle or a braking cycle.
+// BatteryMonitor doesn't know what caused a change in its own level,
+// it just exposes Drain()/Charge() and applies whichever one is called.
+// RegenerativeBraking is the only thing that calls them, once per
+// cycle, once it has decided whether this is a drive or a braking cycle.
 class BatteryMonitor : public ISubsystem
 {
 public:
@@ -22,16 +21,21 @@ public:
     void Run() override;
     void Report() override;
 
-    // Called by RegenerativeBraking on a drive cycle. Higher speed = more drain.
+    // higher speed means more drain;
+    // called by RegenerativeBraking on a drive cycle
     void Drain(int motorSpeed);
 
-    // Called by RegenerativeBraking on a braking cycle. Bigger speed drop = more charge.
+    // bigger speed drop means more charge;
+    // called by RegenerativeBraking on a braking cycle
     void Charge(int speedDrop);
 
 private:
-    int mLevel;        // battery percentage, clamped to [0, 100]
-    int mLastDrain;    // this cycle's drain, for reporting (0 if none)
-    int mLastCharge;   // this cycle's regen charge, for reporting (0 if none)
+    int mLevel;   // battery percentage, kept between 0 and 100
+
+    // last Drain()/Charge() amount, for Report(). Only one of the two
+    // is ever nonzero, since only one of them runs in a given cycle.
+    int mLastDrain;
+    int mLastCharge;
 };
 
 #endif

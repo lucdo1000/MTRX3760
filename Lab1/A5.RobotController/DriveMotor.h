@@ -6,16 +6,13 @@
 #define DRIVEMOTOR_H
 
 #include "ISubsystem.h"
-#include <iostream>
 
-//---------------------------------------------------------------
-// Models the robot's propulsion. A DriveMotor only knows its own speed —
-// it has no idea RegenerativeBraking or BatteryMonitor exist. It doesn't
-// decide for itself whether to speed up or slow down each cycle; that
-// decision needs the whole robot's current speed, which is
-// RegenerativeBraking's job (see RegenerativeBraking.h). So Run() here
-// does nothing, and Accelerate()/Brake() are called on us directly by
-// whichever subsystem is coordinating the cycle.
+//---DriveMotor Interface------------------------------------------
+// Models the robot's propulsion. A DriveMotor only knows its own speed,
+// it has no idea RegenerativeBraking or BatteryMonitor exist. Deciding
+// whether to speed up or slow down needs the robot's current speed,
+// and that decision belongs to RegenerativeBraking, so Run() here does
+// nothing. Accelerate() and Brake() get called on us directly instead.
 class DriveMotor : public ISubsystem
 {
 public:
@@ -24,24 +21,27 @@ public:
     void Run() override;
     void Report() override;
 
-    // Speed up under the robot's own power. Called by RegenerativeBraking
-    // when this is a drive cycle.
+    // speed up under the robot's own power;
+    // called by RegenerativeBraking on a drive cycle
     void Accelerate();
 
-    // Slow down under braking, by at most amount (never below 0). Called
-    // by RegenerativeBraking when this is a braking cycle. Never called
-    // in the same cycle as Accelerate().
+    // slow down under braking, by at most amount, never below 0;
+    // called by RegenerativeBraking on a braking cycle
     void Brake(int amount);
 
+    // current speed
     int GetSpeed() const;
 
 private:
-    static const int kMaxSpeed = 30;   // speed cap, so acceleration can't run away forever
+    static const int kMaxSpeed = 30;   // speed cap
     static const int kAccel = 5;       // speed gained per Accelerate() call
 
     int mSpeed;
-    int mLastAccel;   // this cycle's Accelerate() delta, for reporting (0 if braking)
-    int mLastBrake;   // this cycle's Brake() delta, for reporting (0 if accelerating)
+
+    // last Accelerate()/Brake() amount, for Report(). Only one of the two
+    // is ever nonzero, since only one of them runs in a given cycle.
+    int mLastAccel;
+    int mLastBrake;
 };
 
 #endif

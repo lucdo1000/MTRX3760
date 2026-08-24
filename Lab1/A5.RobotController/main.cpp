@@ -15,19 +15,17 @@ int main()
 
     Controller robot;
 
-    // These are owned here, not by Controller or RegenerativeBraking —
-    // both just hold pointers/references to them (see AddSubsystem and
-    // the RegenerativeBraking constructor). They must outlive robot.
+    // Owned here, not by Controller or RegenerativeBraking, both just
+    // hold pointers to them. Must outlive robot.
     DriveMotor motor;
     BatteryMonitor battery;
     RegenerativeBraking brakes(&motor, &battery);
 
     // Registration order only decides print order within a cycle (motor,
-    // then braking status, then battery) — it doesn't affect behaviour.
-    // DriveMotor and BatteryMonitor's own Run() do nothing; all of the
-    // actual state changes happen inside RegenerativeBraking::Run(),
-    // which holds direct pointers to the other two rather than going
-    // through Controller's subsystem list.
+    // then braking status, then battery), it doesn't affect behaviour.
+    // DriveMotor and BatteryMonitor's own Run() do nothing, all the real
+    // state changes happen inside RegenerativeBraking::Run(), through
+    // the direct pointers above rather than Controller's subsystem list.
     robot.AddSubsystem(&motor);
     robot.AddSubsystem(&brakes);
     robot.AddSubsystem(&battery);
