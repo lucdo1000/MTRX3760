@@ -12,6 +12,9 @@ public:
     void Run() override;
     void Report() override;
 
+    // For regenerative breaking
+    void Charge(int amount);
+
 private:
     int mLevel;   // battery percentage
 };
