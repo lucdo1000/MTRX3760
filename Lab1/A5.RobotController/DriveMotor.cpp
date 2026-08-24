@@ -5,7 +5,6 @@
 #include "DriveMotor.h"
 #include <iostream>
 
-//---DriveMotor Implementation--------------------------------------
 DriveMotor::DriveMotor()
     : mSpeed(0), mLastAccel(0), mLastBrake(0)
 {
