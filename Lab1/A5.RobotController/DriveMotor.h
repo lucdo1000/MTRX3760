@@ -14,6 +14,9 @@ public:
 
     void ReduceSpeed(int amount);
 
+    int GetSpeed() const;
+    int GetLastSpeed() const;
+
 private:
     int mSpeed;
 };
