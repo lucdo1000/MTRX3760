@@ -1,7 +1,7 @@
 #include "Controller.h"
 #include "DriveMotor.h"
-#include "LineSensor.h"
 #include "BatteryMonitor.h"
+#include "RegenerativeBraking.h"
 
 int main()
 {
@@ -15,7 +15,7 @@ int main()
     robot.AddSubsystem(&battery);
     robot.AddSubsystem(&brakes);
     
-    for(int i = 0; i < 3; ++i)
+    for(int i = 0; i < 5; ++i)
     {
         robot.RunCycle();
     }
