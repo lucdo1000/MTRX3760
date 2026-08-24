@@ -16,3 +16,9 @@ void BatteryMonitor::Report()
 {
     std::cout << "Battery level: " << mLevel << "%" << std::endl;
 }
+
+void BatteryMonitor::Charge(int amount)
+{
+    mLevel += amount;
+    if(mLevel > 100) mLevel = 100;
+}
