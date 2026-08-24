@@ -9,7 +9,7 @@ int main()
 
     DriveMotor motor;
     BatteryMonitor battery;
-    RegenerativeBreaking brakes(&motor, &battery)
+    RegenerativeBraking brakes(&motor, &battery)
     
     robot.AddSubsystem(&motor);
     robot.AddSubsystem(&battery);
