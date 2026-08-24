@@ -5,7 +5,7 @@
 #include "Controller.h"
 #include <iostream>
 
-//---Controller Implementation--------------------------------------
+// Constructor -- sets cycle count to 0
 Controller::Controller()
     : mCycleCount(0)
 {
@@ -13,6 +13,7 @@ Controller::Controller()
 
 void Controller::AddSubsystem(ISubsystem* s)
 {
+    // Adds a new object s to the vector (list)
     mSubsystems.push_back(s);
 }
 
@@ -21,15 +22,8 @@ void Controller::RunCycle()
     ++mCycleCount;
     std::cout << "--- Cycle " << mCycleCount << " ---" << std::endl;
 
-    // two passes: every subsystem updates first, then every subsystem
-    // reports. That way Report() always reflects this cycle's state, no
-    // matter what order subsystems were added in or how they depend on
-    // each other (braking changes the motor's speed, for example).
-    //
-    // s is an ISubsystem* here, not a DriveMotor* or a
-    // RegenerativeBraking*. Run()/Report() dispatch to whichever
-    // concrete subsystem s actually points to. That's polymorphism,
-    // this loop doesn't change no matter how many kinds get added.
+    // Two passes: every subsystem updates first, then every subsystem reports so that Report() always reflects this cycle's state
+    // The common interfaces for all subsystems
     for(ISubsystem* s : mSubsystems)
         s->Run();
 
