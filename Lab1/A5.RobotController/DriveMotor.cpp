@@ -14,3 +14,9 @@ void DriveMotor::Report()
 {
     std::cout << "DriveMotor speed: " << mSpeed << std::endl;
 }
+
+void DriveMotor::ReduceSpeed(int amount)
+{
+    mSpeed -= amount;
+    if(mSpeed < 0) mSpeed = 0;
+}
