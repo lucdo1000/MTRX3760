@@ -19,9 +19,13 @@ void DriveMotor::Report()
 void DriveMotor::ReduceSpeed(int amount)
 {
     mLastSpeed = mSpeed;
+
+    if(amount > mSpeed)
+        amount = mSpeed;   // cap reduction to current speed
+
     mSpeed -= amount;
-    if(mSpeed < 0) mSpeed = 0;
 }
+
 
 int DriveMotor::GetSpeed() const
 {
