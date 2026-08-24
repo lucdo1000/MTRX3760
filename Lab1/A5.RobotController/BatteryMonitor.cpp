@@ -7,9 +7,9 @@ BatteryMonitor::BatteryMonitor()
 
 void BatteryMonitor::Run()
 {
-    // mLevel -= 5;          // battery drains each cycle
-    // if(mLevel < 0)
-    //     mLevel = 0;
+    mLevel -= 5;          // battery drains each cycle
+    if(mLevel < 0)
+        mLevel = 0;
 }
 
 void BatteryMonitor::Report()
