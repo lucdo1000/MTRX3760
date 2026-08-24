@@ -7,29 +7,32 @@ RegenerativeBraking::RegenerativeBraking(DriveMotor* motor, BatteryMonitor* batt
 
 void RegenerativeBraking::Run()
 {
-    mActive = !mActive;
+    int speed = mMotor->GetSpeed();
 
-    // Tell motor whether brakes are active
-    mMotor->Run(mActive);
+    // Decide whether braking should be active this cycle, based on
+    // actual motor speed rather than an unconditional toggle.
+    if(!mActive && speed >= kEngageSpeed)
+        mActive = true;
+    else if(mActive && speed <= kDisengageSpeed)
+        mActive = false;
 
+    // Exactly one of drive or brake happens this cycle, never both — so
+    // exactly one of drain or charge happens too, caused by whichever
+    // subsystem actually did something.
     if(mActive)
     {
-        int oldSpeed = mMotor->GetSpeed();
+        mMotor->Brake(kBrakeStrength);
+        int speedDrop = speed - mMotor->GetSpeed();
 
-        mMotor->ReduceSpeed(10);   // braking amount
-
-        int newSpeed = mMotor->GetSpeed();
-        int speedDrop = oldSpeed - newSpeed;
-
-        mBattery->RegenCharge(speedDrop);
+        mBattery->Charge(speedDrop);
     }
     else
     {
-        mBattery->ProgressiveDrain(mMotor->GetSpeed());
+        mMotor->Accelerate();
+
+        mBattery->Drain(mMotor->GetSpeed());
     }
 }
-
-
 
 void RegenerativeBraking::Report()
 {

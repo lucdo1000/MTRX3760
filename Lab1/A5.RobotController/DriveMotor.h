@@ -12,14 +12,23 @@ public:
     void Run() override;
     void Report() override;
 
-    void ReduceSpeed(int amount);
+    // Speed up under the robot's own power. Called by RegenerativeBraking
+    // when this is a drive cycle.
+    void Accelerate();
+
+    // Slow down under braking. Called by RegenerativeBraking when this
+    // is a braking cycle. Never called in the same cycle as Accelerate().
+    void Brake(int amount);
 
     int GetSpeed() const;
-    int GetLastSpeed() const;
 
 private:
+    static const int kMaxSpeed = 30;
+    static const int kAccel = 5;
+
     int mSpeed;
-    int mLastSpeed;
+    int mLastAccel;   // this cycle's Accelerate() delta, for reporting (0 if braking)
+    int mLastBrake;   // this cycle's Brake() delta, for reporting (0 if accelerating)
 };
 
 #endif

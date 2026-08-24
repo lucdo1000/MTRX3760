@@ -7,11 +7,14 @@
 class Controller
 {
 public:
+    Controller();
+
     void AddSubsystem(ISubsystem* s);
     void RunCycle();
 
 private:
     std::vector<ISubsystem*> mSubsystems;
+    int mCycleCount;
 };
 
 #endif

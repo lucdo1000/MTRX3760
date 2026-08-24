@@ -12,15 +12,16 @@ public:
     void Run() override;
     void Report() override;
 
-    // For regenerative breaking
-    void Charge(int amount);
+    // Called by RegenerativeBraking on a drive cycle. Higher speed = more drain.
+    void Drain(int motorSpeed);
 
-    // Higher speed = Higher battery drain
-    void ProgressiveDrain(int motorSpeed);
-    void RegenCharge(int speedDrop);
+    // Called by RegenerativeBraking on a braking cycle. Bigger speed drop = more charge.
+    void Charge(int speedDrop);
 
 private:
-    int mLevel;   // battery percentage
+    int mLevel;        // battery percentage
+    int mLastDrain;    // this cycle's drain, for reporting (0 if none)
+    int mLastCharge;   // this cycle's regen charge, for reporting (0 if none)
 };
 
 #endif

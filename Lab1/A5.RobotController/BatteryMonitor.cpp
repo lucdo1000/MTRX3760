@@ -1,48 +1,51 @@
 #include "BatteryMonitor.h"
 
 BatteryMonitor::BatteryMonitor()
-    : mLevel(100)
+    : mLevel(100), mLastDrain(0), mLastCharge(0)
 {
 }
 
 void BatteryMonitor::Run()
 {
-    mLevel -= 5;          // battery drains each cycle
-    if(mLevel < 0)
-        mLevel = 0;
+    // Battery level only changes via Drain() / Charge(), called by
+    // RegenerativeBraking once it knows whether this cycle is a drive
+    // cycle or a braking cycle. Nothing to do here on our own.
 }
 
 void BatteryMonitor::Report()
 {
-    std::cout << "Battery level: " << mLevel << "%" << std::endl;
+    std::cout << "Battery: ";
+    if(mLastCharge > 0)
+        std::cout << "+" << mLastCharge << "% regen charge";
+    else if(mLastDrain > 0)
+        std::cout << "-" << mLastDrain << "% drive drain";
+    else
+        std::cout << "no change";
+    std::cout << " -> " << mLevel << "%" << std::endl;
 }
 
-void BatteryMonitor::Charge(int amount)
+void BatteryMonitor::Drain(int motorSpeed)
 {
-    mLevel += amount;
-    if(mLevel > 100) mLevel = 100;
-}
-
-void BatteryMonitor::ProgressiveDrain(int motorSpeed)
-{
-    // Base drain
+    int before = mLevel;
     int drain = 5;
-
-    // Extra drain based on speed
-    drain += motorSpeed / 5;   // every +20 speed adds +1 drain
+    drain += motorSpeed / 5;   // every +5 speed adds +1 drain
 
     mLevel -= drain;
     if(mLevel < 0) mLevel = 0;
+
+    mLastDrain = before - mLevel;
+    mLastCharge = 0;   // draining and charging can't both happen this cycle
 }
 
-void BatteryMonitor::RegenCharge(int speedDrop)
+void BatteryMonitor::Charge(int speedDrop)
 {
-    // Base regen
+    int before = mLevel;
     int charge = 2;
-
-    // More regen for sharper braking
     charge += speedDrop / 10;   // every -10 speed adds +1 charge
 
     mLevel += charge;
     if(mLevel > 100) mLevel = 100;
+
+    mLastCharge = mLevel - before;
+    mLastDrain = 0;
 }
