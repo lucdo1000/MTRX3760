@@ -12,6 +12,8 @@ public:
     void Run() override;
     void Report() override;
 
+    void ReduceSpeed(int amount);
+
 private:
     int mSpeed;
 };
