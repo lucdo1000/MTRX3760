@@ -7,18 +7,28 @@ RegenerativeBraking::RegenerativeBraking(DriveMotor* motor, BatteryMonitor* batt
 
 void RegenerativeBraking::Run()
 {
-    // Activate braking every second cycle
     mActive = !mActive;
 
     if(mActive)
     {
-        // Slow the motor
-        mMotor->ReduceSpeed(5);
+        int oldSpeed = mMotor->GetSpeed();
 
-        // Recharge battery slightly
-        mBattery->Charge(2);
+        // Apply braking
+        mMotor->ReduceSpeed(15);
+
+        int newSpeed = mMotor->GetSpeed();
+        int speedDrop = oldSpeed - newSpeed;
+
+        // Recharge based on braking strength
+        mBattery->RegenCharge(speedDrop);
+    }
+    else
+    {
+        // Normal battery drain based on speed
+        mBattery->ProgressiveDrain(mMotor->GetSpeed());
     }
 }
+
 
 void RegenerativeBraking::Report()
 {
