@@ -8,7 +8,7 @@ DriveMotor::DriveMotor()
 void DriveMotor::Run()
 {
     mLastSpeed = mSpeed;
-    mSpeed += 10;   // motor speeds up each cycle
+    mSpeed += 20;   // motor speeds up each cycle
 }
 
 void DriveMotor::Report()
