@@ -15,7 +15,7 @@
 
 //---One sixtieth of a second of simulated time per update---
 const float CSimulator::FixedTimeStep = 1.0f / 60.0f;
-const int CSimulator::MaximumUpdates = 6000;
+const int CSimulator::MaximumUpdates = 10000;
 
 //-----------------------------------------------------------------------------
 CSimulator::CSimulator()
