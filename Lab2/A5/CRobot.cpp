@@ -23,7 +23,7 @@ const float CRobot::WheelOffset = 10.0f;
 const float CRobot::HeadingLineScale = 1.4f;
 const float CRobot::TrailThickness = 1.5f;
 const float CRobot::LapDepartureDistance = 150.0f;
-const float CRobot::LapReturnDistance = 30.0f;
+const float CRobot::LapReturnDistance = 45.0f;
 
 //-----------------------------------------------------------------------------
 CRobot::CRobot( const std::string& arKind, int aIndex, const CPose& arStartPose,

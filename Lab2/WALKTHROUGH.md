@@ -728,7 +728,7 @@ else is byte-identical apart from the file banner.
 | Requirement (handout) | Where it lives | Why there |
 |---|---|---|
 | A single source of randomness | **`CNoise`** (new) — wraps `<random>`, one seeded `mt19937`, one operation: `Uniform(spread)` in ±spread | Same idea as `CRender` hiding raylib: nothing else touches an engine or a distribution. One seed, set in one place, so the run repeats exactly. |
-| Random offset to the starting position and orientation | `CSimulator::PerturbedStart()` — ±10 units in x and y, ±10° in heading | The simulator is what places robots. The robot never knows it was moved, and lap detection measures from wherever it began, so nothing else changes. |
+| Random offset to the starting position and orientation | `CSimulator::PerturbedStart()` — ±20 units in x and y, ±30° in heading | The simulator is what places robots. The robot never knows it was moved, and lap detection measures from wherever it began, so nothing else changes. |
 | Random offset to how far each wheel turns each step | `CWheel::Travel(dt, noise)` — commanded distance × (1 + size error + slip) | The payoff for `CWheel` being a class. Two errors, as real wheels have: a **fixed size error** drawn once when the wheel is built (±8%), and a **fresh slip** every step (±8%). The robot asks for distances and gets honest ones; it never sees the noise. |
 | 20 of each type at once | `CSimulator::Build()` loops `RobotsPerType = 20` per kind | A named constant, not a magic number. |
 | Robots tell apart | `CRobot` now has a **kind** (`"WallFollower"`, shared by the fleet, exposed as `CWallFollower::Kind`) and a **name** (`"WallFollower 07"`) | Per-kind completion counts come from the kind; console lines from the name. |
@@ -744,6 +744,11 @@ reportable:
   lost, and the window would otherwise sit for 100 s of simulated time.
 - **The summary leads with "N of 20 completed a lap" per kind**, then the
   per-robot lines, then total collisions marked as not counted.
+- **`LapReturnDistance` is 45, up from 30.** A robot's start is nudged up to
+  20 units off the path its controller settles onto, and it comes home along
+  that path, not through its exact start. With the A2 radius a quarter of the
+  wall followers circled forever, driving perfectly, never "finishing".
+  Departure is still 150, so nothing else can look like a lap.
 
 ## Why a fixed size error and not just per-step slip
 
@@ -761,13 +766,19 @@ honest model — no two wheels are the same size.
 | none | ±5% | 0.6 / 2.4 | 40 of 40 |
 | ±3% | ±5% | 1.1 / 4.1 | 40 of 40 |
 | ±6% | ±5% | 2.9 / 11.6 | 40 of 40 |
-| **±8% (chosen)** | **±8%** | **2 – 10 / 5 – 35** (straights vs corners) | **40 of 40, 0 collisions, 1742 updates** |
+| **±8% (chosen)** | **±8%** | **2 – 10 / 5 – 35** (straights vs corners) | **40 of 40, 0 collisions** |
 | ±10% | ±15% | 6.4 / 25.6 | 40 of 40 |
 
-All of that is two constants in `CWheel.cpp` (`SizeErrorSpread`, `SlipSpread`)
-and two in `CSimulator.cpp` (`StartPositionSpread`, `StartHeadingSpread`). If
-the screenshot wants a wider fan, raise `SizeErrorSpread` to 0.10 — the fleet
-still all finishes.
+The start spread was swept the same way, over three seeds. Heading spread
+makes no difference at all up to ±45°. Position spread is capped by geometry:
+the wall follower's start is only 40 units from the top wall, so ±30 begins to
+place robots against it (collisions), and at ±25 the odd line follower starts
+too far from the line to find it. ±20 finishes 20 of 20 of each on every seed.
+
+All of that is two constants in `CWheel.cpp` (`SizeErrorSpread`, `SlipSpread`),
+two in `CSimulator.cpp` (`StartPositionSpread`, `StartHeadingSpread`) and one
+in `CRobot.cpp` (`LapReturnDistance`). If the screenshot wants a wider fan,
+raise `SizeErrorSpread` to 0.10 — the fleet still all finishes.
 
 ## Design decisions worth a line in the report
 
@@ -786,6 +797,6 @@ still all finishes.
 
 Built with the marker's command (`g++ -Wall -Wextra *.cpp -lraylib`), clean.
 Headless run (renderer stubbed): 20 of 20 wall followers and 20 of 20 line
-followers complete a lap, 0 collisions, 1742 updates; valgrind 533 allocs /
-533 frees, no leaks. Trail density is 40 × ~1700 points; if it stutters on a
+followers complete a lap, 0 collisions, 1731 updates; valgrind clean, no
+leaks. Trail density is 40 × ~1700 points; if it stutters on a
 laptop, thin `CTrail::AddPoint` to every few units of travel.

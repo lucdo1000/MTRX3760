@@ -96,7 +96,10 @@ class CRobot
         static const float TrailThickness;   // units, drawn width of the trail
         // The robot must get at least this far from where it started before
         // coming home can count as a completed lap, so that jitter at the start
-        // cannot be mistaken for a lap.
+        // cannot be mistaken for a lap. The return radius is wider than in A2
+        // because a robot's start is nudged up to 20 units off the path its
+        // controller settles onto, and it comes home along that path, not
+        // through its exact start.
         static const float LapDepartureDistance;  // units from the start pose
         static const float LapReturnDistance;     // units; back inside = a lap
 

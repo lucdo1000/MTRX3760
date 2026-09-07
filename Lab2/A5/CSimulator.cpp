@@ -16,7 +16,7 @@
 
 namespace
 {
-    const float Degrees10 = 0.174533f;
+    const float Degrees30 = 0.523599f;
 }
 
 //---One sixtieth of a second of simulated time per update---
@@ -25,8 +25,10 @@ const float CSimulator::FixedTimeStep = 1.0f / 60.0f;
 // still going at twice that is lost, and there are forty robots to wait for.
 const int CSimulator::MaximumUpdates = 3200;
 const int CSimulator::RobotsPerType = 20;
-const float CSimulator::StartPositionSpread = 10.0f;
-const float CSimulator::StartHeadingSpread = Degrees10;
+// The wall follower's start is 40 units from the nearest wall, so 20 is as
+// far as it can be nudged and still be placed clear of it.
+const float CSimulator::StartPositionSpread = 20.0f;
+const float CSimulator::StartHeadingSpread = Degrees30;
 
 //-----------------------------------------------------------------------------
 CSimulator::CSimulator()
