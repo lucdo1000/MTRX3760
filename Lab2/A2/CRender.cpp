@@ -14,7 +14,7 @@ CRender::CRender()
         mScreenWidth( 800 ),
         mScreenHeight( 600 )
 {
-    InitWindow( mScreenWidth, mScreenHeight, "TODO: Replace This Text" );
+    InitWindow( mScreenWidth, mScreenHeight, "Wall and Line Follower Robot" );
     SetTargetFPS( 60 );
 }
 
