@@ -1,15 +1,10 @@
-//-----------------------------------------------------------------------------
 // CWheel.cpp
 //
-// MTRX3760 Lab 2 - A2, Wall Follower and Line Follower
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
-//
-//-----------------------------------------------------------------------------
+// The wheel object keeps the per-wheel speed and offset separate from the robot
+// itself, which is what makes the differential-drive math easy to follow.
 
 #include "CWheel.h"
 
-//-----------------------------------------------------------------------------
 CWheel::CWheel( float aLateralOffset )
     :
         mSpeed( 0.0f ),
@@ -17,19 +12,16 @@ CWheel::CWheel( float aLateralOffset )
 {
 }
 
-//-----------------------------------------------------------------------------
 void CWheel::SetSpeed( float aSpeed )
 {
     mSpeed = aSpeed;
 }
 
-//-----------------------------------------------------------------------------
 float CWheel::GetSpeed() const
 {
     return mSpeed;
 }
 
-//-----------------------------------------------------------------------------
 float CWheel::GetLateralOffset() const
 {
     return mLateralOffset;

@@ -1,16 +1,11 @@
-//-----------------------------------------------------------------------------
 // CSensor.cpp
 //
-// MTRX3760 Lab 2 - A2, Wall Follower and Line Follower
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
-//
-//-----------------------------------------------------------------------------
+// Shared sensor placement logic: the mount angle and distance define where the
+// sensor sits on the robot and which way it looks.
 
 #include "CSensor.h"
 #include "CGeometry.h"
 
-//-----------------------------------------------------------------------------
 CSensor::CSensor( float aMountAngleRadians, float aMountDistance )
     :
         mMountAngle( aMountAngleRadians ),
@@ -18,22 +13,18 @@ CSensor::CSensor( float aMountAngleRadians, float aMountDistance )
 {
 }
 
-//-----------------------------------------------------------------------------
 CSensor::~CSensor()
 {
 }
 
-//-----------------------------------------------------------------------------
 // The mounting angle is relative to the robot, so the sensor's own heading is
 // the robot's heading plus that offset.
-//-----------------------------------------------------------------------------
 float CSensor::HeadingFor( const CPose& arRobotPose ) const
 {
     float Result = CGeometry::NormaliseAngle( arRobotPose.mHeading + mMountAngle );
     return Result;
 }
 
-//-----------------------------------------------------------------------------
 Vec2D CSensor::PositionFor( const CPose& arRobotPose ) const
 {
     Vec2D Result = CGeometry::PointAlong( arRobotPose.mPosition,

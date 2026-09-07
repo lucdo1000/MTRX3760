@@ -1,4 +1,10 @@
+
 // CGeometry.cpp
+//
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 //
 // Implementation of the shared geometry. See CGeometry.h for the coordinate
 // convention these all assume.
@@ -7,8 +13,7 @@
 
 #include <cmath>
 
-// A ray that meets nothing reports this. It is larger than any normal distance
-// inside the window, so it behaves like a safe sentinel value.
+//---A ray that meets nothing reports this. Larger than the window diagonal---
 const float CGeometry::NoHit = 100000.0f;
 
 namespace
@@ -88,6 +93,7 @@ float CGeometry::NormaliseAngle( float aAngleRadians )
 // which Cramer's rule solves directly. The ray hits the segment when t is not
 // behind the origin and u lands between the segment's two ends. Because D is a
 // unit vector, t is the distance travelled.
+
 float CGeometry::RayHitsSegment( const Vec2D& arOrigin, float aHeadingRadians,
                                  const Vec2D& arStart, const Vec2D& arEnd )
 {
@@ -99,8 +105,7 @@ float CGeometry::RayHitsSegment( const Vec2D& arOrigin, float aHeadingRadians,
 
     const float Determinant = ( Edge.x * Direction.y ) - ( Direction.x * Edge.y );
 
-    // If the determinant is zero, the ray and the wall segment are parallel and
-    // cannot meet in the current direction.
+    //---A determinant of zero means the ray and the segment are parallel---
     if( std::fabs( Determinant ) > Epsilon )
     {
         const float AlongRay = ( ( Edge.x * ToStart.y )
@@ -124,6 +129,7 @@ float CGeometry::RayHitsSegment( const Vec2D& arOrigin, float aHeadingRadians,
 // Projects the point onto the infinite line through the segment, then clamps
 // that projection to the segment itself, so that points beyond either end
 // measure to the nearer end rather than to empty space.
+
 float CGeometry::DistanceToSegment( const Vec2D& arPoint,
                                     const Vec2D& arStart, const Vec2D& arEnd )
 {
@@ -132,7 +138,7 @@ float CGeometry::DistanceToSegment( const Vec2D& arPoint,
 
     float Result = 0.0f;
 
-    // A zero-length segment is effectively just a point.
+    //---A zero-length segment is just a point---
     if( EdgeLengthSquared < Epsilon )
     {
         Result = DistanceBetween( arPoint, arStart );

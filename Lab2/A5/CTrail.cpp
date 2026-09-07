@@ -1,6 +1,7 @@
+
 // CTrail.cpp
 //
-// MTRX3760 Lab 2 - A2, Wall Follower and Line Follower
+// MTRX3760 Lab 2 - A5, Noise Bonus
 // Written by SID 540700701 and SID <PARTNER SID>
 // Practical section: <SECTION>
 //
@@ -8,7 +9,7 @@
 #include "CTrail.h"
 #include "CGeometry.h"
 
-// Points closer than this are merged into the previous one.
+//---Points closer than this are merged into the previous one---
 const float CTrail::MinimumSpacing = 2.0f;
 
 CTrail::CTrail( float aThickness, Color aColour )
@@ -42,6 +43,7 @@ void CTrail::Clear()
 
 // Drawn as a run of short straight segments joining consecutive points, which
 // reads as a smooth curve at this spacing.
+
 void CTrail::Draw( CRender& arRender ) const
 {
     for( std::size_t i = 1; i < mPoints.size(); ++i )

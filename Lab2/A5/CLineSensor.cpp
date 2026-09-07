@@ -1,7 +1,10 @@
+
 // CLineSensor.cpp
 //
-// This is the A2-specific sensing class for the line-following robot. It reports
-// a simple yes/no answer rather than a distance to a wall.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 
 #include "CLineSensor.h"
 #include "CWorld.h"
@@ -26,9 +29,9 @@ bool CLineSensor::IsOverLine() const
     return mOverLine;
 }
 
-// A dot marks the sensor's position and lights up when it is over the line.
-// Watching the two dots makes it much easier to tell a steering bug from a
-// sensing bug.
+// A dot at the sensor's position, lit when it is over the line. Watching the
+// two dots is how you tell a steering bug from a sensing bug.
+
 void CLineSensor::Draw( CRender& arRender, const CPose& arRobotPose ) const
 {
     const Color Shade = mOverLine ? CPalette::SensorHit : CPalette::SensorBeam;

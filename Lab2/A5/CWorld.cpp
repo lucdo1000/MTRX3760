@@ -1,7 +1,10 @@
+
 // CWorld.cpp
 //
-// This world contains two loops: one wall loop and one floor line loop. The
-// geometry queries are split by purpose instead of pretending both are the same.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 
 #include "CWorld.h"
 #include "CGeometry.h"
@@ -17,7 +20,7 @@ CWorld::CWorld()
         mWallStartPose(),
         mLineStartPose()
 {
-    // Until a file is read there is nowhere to start from.
+    //---Until a file is read there is nowhere to start from---
     mWallStartPose.mPosition.x = 0.0f;
     mWallStartPose.mPosition.y = 0.0f;
     mWallStartPose.mHeading = 0.0f;
@@ -66,6 +69,7 @@ const CPose& CWorld::GetLineStartPose() const
 // The loop is closed, so the last vertex joins back to the first; taking the
 // previous vertex as (i + count - 1) % count covers that join without a
 // special case for it.
+
 float CWorld::DistanceToWallAlong( const Vec2D& arFrom,
                                    float aHeadingRadians ) const
 {
@@ -113,6 +117,7 @@ float CWorld::DistanceToNearestWall( const Vec2D& arPoint ) const
 
 // The line has width, so a point is over it when it lies within half that
 // width of the centre of any of the line's segments.
+
 bool CWorld::IsOverLine( const Vec2D& arPoint ) const
 {
     bool Result = false;
@@ -145,6 +150,7 @@ void CWorld::DrawLoop( CRender& arRender, const std::vector<Vec2D>& arVertices,
 }
 
 // The floor line is drawn first so the walls sit on top where they meet.
+
 void CWorld::Draw( CRender& arRender ) const
 {
     DrawLoop( arRender, mLineVertices, LineWidth, CPalette::FloorLine );

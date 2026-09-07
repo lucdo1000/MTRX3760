@@ -1,3 +1,4 @@
+
 // CRender.cpp
 //
 // Implementation of the raylib wrapper. The :: prefix on the raylib calls says
@@ -11,7 +12,7 @@ CRender::CRender()
         mScreenWidth( 800 ),
         mScreenHeight( 600 )
 {
-    InitWindow( mScreenWidth, mScreenHeight, "Wall and Line Follower Robot" );
+    InitWindow( mScreenWidth, mScreenHeight, "Robots with Noise" );
     SetTargetFPS( 60 );
 }
 

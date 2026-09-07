@@ -1,7 +1,10 @@
+
 // CSensor.cpp
 //
-// Shared sensor placement logic: the mount angle and distance define where the
-// sensor sits on the robot and which way it looks.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 
 #include "CSensor.h"
 #include "CGeometry.h"
@@ -19,6 +22,7 @@ CSensor::~CSensor()
 
 // The mounting angle is relative to the robot, so the sensor's own heading is
 // the robot's heading plus that offset.
+
 float CSensor::HeadingFor( const CPose& arRobotPose ) const
 {
     float Result = CGeometry::NormaliseAngle( arRobotPose.mHeading + mMountAngle );

@@ -1,7 +1,14 @@
+
 // main.cpp
 //
-// MTRX3760 Lab 2, A1: a robot that drives around a room following the wall on
-// its right hand side.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
+//
+// MTRX3760 Lab 2, A5: twenty wall followers and twenty line followers sharing
+// one room, each starting from a slightly different place and each with wheels
+// that slip a little, so no two take the same path.
 //
 // BUILDING (raylib installed with apt)
 //
@@ -24,6 +31,7 @@
 namespace
 {
     const char* const WallsMapFile = "SimpleWalls.map";
+    const char* const LineMapFile = "SimpleLine.map";
 }
 
 int main()
@@ -32,14 +40,14 @@ int main()
 
     CSimulator Simulator;
 
-    if( Simulator.Build( WallsMapFile ) )
+    if( Simulator.Build( WallsMapFile, LineMapFile ) )
     {
         Simulator.Run();
         Result = 0;
     }
     else
     {
-        std::cout << "Could not start: check the map file is beside the "
+        std::cout << "Could not start: check the map files are beside the "
                   << "program." << std::endl;
     }
 

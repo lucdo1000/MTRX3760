@@ -1,10 +1,8 @@
-//-----------------------------------------------------------------------------
 // CLoopReader.cpp
 //
 // Reads a loop file into a single loop. The file format is described at the top
 // of CLoopReader.h. ReadFile ignores blank lines and '#' comments, and stops
 // with a clear message naming the line if it meets something it cannot parse.
-//-----------------------------------------------------------------------------
 
 #include "CLoopReader.h"
 
@@ -14,11 +12,10 @@
 #include <sstream>
 #include <stdexcept>
 
-//---Degrees in the file are converted to radians for use in the program.------
+// Degrees in the file are converted to radians for use in the program.
 static const float kDegreesToRadians = float( M_PI ) / 180.0f;
 
 
-//-----------------------------------------------------------------------------
 CLoopReader::CLoopReader()
     :
         mStartPose( { { 0.0f, 0.0f }, 0.0f } )
@@ -26,28 +23,24 @@ CLoopReader::CLoopReader()
 }
 
 
-//-----------------------------------------------------------------------------
 const std::string& CLoopReader::GetName() const
 {
     return mName;
 }
 
 
-//-----------------------------------------------------------------------------
 const CPose& CLoopReader::GetStartPose() const
 {
     return mStartPose;
 }
 
 
-//-----------------------------------------------------------------------------
 const std::vector<Vec2D>& CLoopReader::GetVertices() const
 {
     return mVertices;
 }
 
 
-//-----------------------------------------------------------------------------
 bool CLoopReader::ReadFile( const std::string& arFilename )
 {
     bool Okay = true;
@@ -74,8 +67,8 @@ bool CLoopReader::ReadFile( const std::string& arFilename )
             Line = Line.substr( 0, Hash );
         }
 
-        // Split the remaining line into whitespace-separated words. A line with
-        // no words (blank, or comment-only) has no keyword and is skipped.
+        // Split the remaining line into whitespace-separated words. Blank lines
+        // and comment-only lines are simply ignored.
         std::istringstream Words( Line );
         std::string Keyword;
         if( Words >> Keyword )

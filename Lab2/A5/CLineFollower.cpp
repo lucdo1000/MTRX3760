@@ -1,7 +1,10 @@
+
 // CLineFollower.cpp
 //
-// This controller is the A2-specific part: it follows a painted line instead of a
-// wall, so the sensor logic and steering rule are different from the wall robot.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 
 #include "CLineFollower.h"
 #include "CWorld.h"
@@ -12,22 +15,23 @@ namespace
     const float Degrees40 = 0.698132f;
 }
 
-// The sensors sit ahead of the robot, with the side sensor angled left so the
-// controller can tell which direction the line has drifted.
+//---Where the sensors sit. A negative angle is out to the robot's left---
+const std::string CLineFollower::Kind = "LineFollower";
 const float CLineFollower::CentreSensorAngle = 0.0f;
 const float CLineFollower::CentreSensorReach = 13.0f;
 const float CLineFollower::SideSensorAngle = -Degrees40;
 const float CLineFollower::SideSensorReach = 15.0f;
 
-// Control tuning.
+//---Control tuning---
 const float CLineFollower::SearchTurn = 34.0f;
 const float CLineFollower::CorrectingTurn = 30.0f;
 const float CLineFollower::CruiseSpeed = 46.0f;
 
-CLineFollower::CLineFollower( const CPose& arStartPose )
+CLineFollower::CLineFollower( int aIndex, const CPose& arStartPose, CNoise& arNoise )
     :
-        CRobot( "LineFollower", arStartPose,
-                CPalette::LineFollowerBody, CPalette::LineFollowerTrail ),
+        CRobot( Kind, aIndex, arStartPose,
+                CPalette::LineFollowerBody, CPalette::LineFollowerTrail,
+                arNoise ),
         mCentreSensor( CentreSensorAngle, CentreSensorReach ),
         mSideSensor( SideSensorAngle, SideSensorReach )
 {
@@ -47,6 +51,7 @@ void CLineFollower::SenseAndSteer( const CWorld& arWorld )
 // means the line lies to the left and the robot should turn left, which is a
 // negative turn. Losing the line from both sensors means it went the other
 // way, so the robot turns right to sweep it back into view.
+
 float CLineFollower::ChooseTurn() const
 {
     const bool CentreOnLine = mCentreSensor.IsOverLine();
@@ -56,14 +61,12 @@ float CLineFollower::ChooseTurn() const
 
     if( CentreOnLine )
     {
-        // If the line is under the centre sensor, the robot just needs a small
-        // corrective nudge if the side sensor shows it is drifting.
+        //---On the line. Ease left if it is starting to slide that way---
         Result = SideOnLine ? -CorrectingTurn : 0.0f;
     }
     else
     {
-        // If the robot loses the line, it turns toward the side sensor reading so
-        // it sweeps back onto the track.
+        //---Off the line: turn towards wherever it went---
         Result = SideOnLine ? -SearchTurn : SearchTurn;
     }
 

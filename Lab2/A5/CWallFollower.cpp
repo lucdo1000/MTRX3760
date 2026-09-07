@@ -1,7 +1,10 @@
+
 // CWallFollower.cpp
 //
-// This is the wall-following controller. It behaves like A1, but this version is
-// kept alongside the line-following class in the same robot hierarchy.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 
 #include "CWallFollower.h"
 #include "CWorld.h"
@@ -13,21 +16,23 @@ namespace
     const float Degrees90 = 1.570796f;
 }
 
-// The sensors point relative to the robot's heading.
+//---Where the sensors point, measured from the robot's heading---
+const std::string CWallFollower::Kind = "WallFollower";
 const float CWallFollower::SideSensorAngle = Degrees90;
 const float CWallFollower::DiagonalSensorAngle = Degrees45;
 
-// Control tuning.
+//---Control tuning---
 const float CWallFollower::TargetWallDistance = 45.0f;
 const float CWallFollower::DiagonalClearance = 62.0f;
 const float CWallFollower::ProportionalGain = 0.9f;
 const float CWallFollower::MaximumTurn = 42.0f;
 const float CWallFollower::CruiseSpeed = 60.0f;
 
-CWallFollower::CWallFollower( const CPose& arStartPose )
+CWallFollower::CWallFollower( int aIndex, const CPose& arStartPose, CNoise& arNoise )
     :
-        CRobot( "WallFollower", arStartPose,
-                CPalette::WallFollowerBody, CPalette::WallFollowerTrail ),
+        CRobot( Kind, aIndex, arStartPose,
+                CPalette::WallFollowerBody, CPalette::WallFollowerTrail,
+                arNoise ),
         mSideSensor( SideSensorAngle, GetBodyRadius() ),
         mDiagonalSensor( DiagonalSensorAngle, GetBodyRadius() )
 {
@@ -40,8 +45,7 @@ void CWallFollower::SenseAndSteer( const CWorld& arWorld )
 
     const float Turn = ChooseTurn();
 
-    // A positive turn makes the left wheel run faster, which swings the robot's
-    // nose to the right while keeping the wall-following logic consistent.
+    //---A positive turn drives the left wheel faster, swinging the nose right---
     Drive( CruiseSpeed + Turn, CruiseSpeed - Turn );
 }
 
@@ -58,13 +62,14 @@ void CWallFollower::SenseAndSteer( const CWorld& arWorld )
 // close turns away. Capping the result keeps the robot from spinning when the
 // side sensor runs off the end of a wall at an outside corner and reads its
 // maximum range - which is exactly the behaviour that rounds the corner.
+
 float CWallFollower::ChooseTurn() const
 {
     float Result = 0.0f;
 
     if( mDiagonalSensor.GetDistance() < DiagonalClearance )
     {
-        // A wall is closing in ahead and to the right, so turn left away from it.
+        //---Wall closing in ahead and to the right: turn left, away from it---
         Result = -MaximumTurn;
     }
     else

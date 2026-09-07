@@ -1,30 +1,37 @@
+
 // CRobot.cpp
 //
-// The shared robot logic is the same for both controller types. The difference is
-// how each subclass senses the world and chooses a steering value.
+// MTRX3760 Lab 2 - A5, Noise Bonus
+// Written by SID 540700701 and SID <PARTNER SID>
+// Practical section: <SECTION>
+//
 
 #include "CRobot.h"
+#include "CNoise.h"
 #include "CWorld.h"
 #include "CGeometry.h"
 #include "CPalette.h"
 
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
-// The handout fixes the body radius at 15 units.
+//---The handout fixes the body radius at 15 units---
 const float CRobot::BodyRadius = 15.0f;
 const float CRobot::WheelOffset = 10.0f;
 const float CRobot::HeadingLineScale = 1.4f;
 const float CRobot::TrailThickness = 1.5f;
 const float CRobot::LapDepartureDistance = 150.0f;
-const float CRobot::LapReturnDistance = 30.0f;
+const float CRobot::LapReturnDistance = 45.0f;
 
-CRobot::CRobot( const std::string& arName, const CPose& arStartPose,
-                Color aBodyColour, Color aTrailColour )
+CRobot::CRobot( const std::string& arKind, int aIndex, const CPose& arStartPose,
+                Color aBodyColour, Color aTrailColour, CNoise& arNoise )
     :
-        mName( arName ),
+        mKind( arKind ),
+        mName( MakeName( arKind, aIndex ) ),
         mPose( arStartPose ),
-        mLeftWheel( -WheelOffset ),   // negative offset: out to the robot's left
-        mRightWheel( WheelOffset ),
+        mLeftWheel( -WheelOffset, arNoise ),   // negative: to the robot's left
+        mRightWheel( WheelOffset, arNoise ),
         mTrail( TrailThickness, aTrailColour ),
         mBodyColour( aBodyColour ),
         mStartPosition( arStartPose.mPosition ),
@@ -43,6 +50,23 @@ CRobot::~CRobot()
 float CRobot::GetBodyRadius()
 {
     return BodyRadius;
+}
+
+// "WallFollower 07": the kind, then the index padded so the names line up in
+// the console.
+
+std::string CRobot::MakeName( const std::string& arKind, int aIndex )
+{
+    std::ostringstream Name;
+
+    Name << arKind << " " << std::setw( 2 ) << std::setfill( '0' ) << aIndex;
+
+    return Name.str();
+}
+
+const std::string& CRobot::GetKind() const
+{
+    return mKind;
 }
 
 const std::string& CRobot::GetName() const
@@ -74,46 +98,55 @@ void CRobot::Drive( float aLeftSpeed, float aRightSpeed )
 // One slice of simulated time: sense and decide, then move, then take note of
 // what moving caused. The order matters - steering is decided from where the
 // robot was, which is what a real control loop does.
-void CRobot::Update( const CWorld& arWorld, float aDeltaTime )
+//
+// A robot that has finished its lap parks. With forty robots running, the
+// quick ones would otherwise keep circling while the slow ones finish, and the
+// screenshot would show two or three laps for some and one for others.
+
+void CRobot::Update( const CWorld& arWorld, CNoise& arNoise, float aDeltaTime )
 {
-    SenseAndSteer( arWorld );
-    AdvancePose( aDeltaTime );
+    if( !mLapComplete )
+    {
+        SenseAndSteer( arWorld );
+        AdvancePose( arNoise, aDeltaTime );
 
-    mTrail.AddPoint( mPose.mPosition );
+        mTrail.AddPoint( mPose.mPosition );
 
-    CheckForCollision( arWorld );
-    CheckForLapCompletion();
+        CheckForCollision( arWorld );
+        CheckForLapCompletion();
+    }
 }
 
-// Differential drive. The robot's forward speed is the average of its two
-// wheels, and it turns because they differ:
+// Differential drive, written in distances rather than speeds because the
+// wheels now report how far they actually went this step, slip included:
 //
 //     forward = (left + right) / 2
 //     turn    = (left - right) / (distance between the wheels)
 //
 // The wheels supply their own offsets, so the separation is asked for rather
-// than assumed. A positive turn rate increases the heading, and because
-// headings run clockwise from the positive x axis, that swings the robot to
-// its own right - which is what driving the left wheel faster does.
-void CRobot::AdvancePose( float aDeltaTime )
+// than assumed. A positive turn increases the heading, and because headings
+// run clockwise from the positive x axis, that swings the robot to its own
+// right - which is what the left wheel covering more ground does.
+
+void CRobot::AdvancePose( CNoise& arNoise, float aDeltaTime )
 {
-    const float LeftSpeed = mLeftWheel.GetSpeed();
-    const float RightSpeed = mRightWheel.GetSpeed();
+    const float LeftTravel = mLeftWheel.Travel( aDeltaTime, arNoise );
+    const float RightTravel = mRightWheel.Travel( aDeltaTime, arNoise );
     const float WheelSeparation = mRightWheel.GetLateralOffset()
                                 - mLeftWheel.GetLateralOffset();
 
-    const float ForwardSpeed = ( LeftSpeed + RightSpeed ) / 2.0f;
-    const float TurnRate = ( LeftSpeed - RightSpeed ) / WheelSeparation;
+    const float Forward = ( LeftTravel + RightTravel ) / 2.0f;
+    const float Turn = ( LeftTravel - RightTravel ) / WheelSeparation;
 
-    mPose.mHeading = CGeometry::NormaliseAngle( mPose.mHeading
-                                              + ( TurnRate * aDeltaTime ) );
+    mPose.mHeading = CGeometry::NormaliseAngle( mPose.mHeading + Turn );
     mPose.mPosition = CGeometry::PointAlong( mPose.mPosition, mPose.mHeading,
-                                             ForwardSpeed * aDeltaTime );
+                                             Forward );
 }
 
 // The robot is a disc, so it is touching a wall when its centre is within one
 // body radius of that wall. mWasColliding makes a single scrape along a wall
 // count once rather than once per update.
+
 void CRobot::CheckForCollision( const CWorld& arWorld )
 {
     const float ToWall = arWorld.DistanceToNearestWall( mPose.mPosition );
@@ -133,6 +166,7 @@ void CRobot::CheckForCollision( const CWorld& arWorld )
 // A lap is counted once the robot has been well away from where it started and
 // has then come back near it. Requiring the departure first is what stops the
 // first few updates from registering as a completed lap.
+
 void CRobot::CheckForLapCompletion()
 {
     const float FromStart = CGeometry::DistanceBetween( mPose.mPosition,
@@ -150,6 +184,7 @@ void CRobot::CheckForLapCompletion()
 
 // Trail first so the robot sits on top of its own path, then the body, then a
 // line showing which way it faces, then whatever sensors it carries.
+
 void CRobot::Draw( CRender& arRender ) const
 {
     mTrail.Draw( arRender );

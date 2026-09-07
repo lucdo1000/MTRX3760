@@ -1,14 +1,11 @@
-//-----------------------------------------------------------------------------
 // CRender.cpp
 //
 // Implementation of the raylib wrapper. The :: prefix on the raylib calls says
 // "the global one", distinguishing raylib's DrawCircle from our member function
 // of the same name.
-//-----------------------------------------------------------------------------
 
 #include "CRender.h"
 
-//-----------------------------------------------------------------------------
 CRender::CRender()
     :
         mScreenWidth( 800 ),

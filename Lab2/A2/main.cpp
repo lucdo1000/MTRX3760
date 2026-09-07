@@ -1,10 +1,4 @@
-//-----------------------------------------------------------------------------
 // main.cpp
-//
-// MTRX3760 Lab 2 - A2, Wall Follower and Line Follower
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
-//
 //
 // MTRX3760 Lab 2, A2: a wall following robot and a line following robot sharing
 // one room.
@@ -22,7 +16,6 @@
 //     ./RobotSimulator
 //
 // CSimulator owns everything, so there is nothing to assemble here.
-//-----------------------------------------------------------------------------
 
 #include "CSimulator.h"
 
@@ -34,7 +27,6 @@ namespace
     const char* const LineMapFile = "SimpleLine.map";
 }
 
-//-----------------------------------------------------------------------------
 int main()
 {
     int Result = 1;

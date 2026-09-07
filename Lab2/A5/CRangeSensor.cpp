@@ -1,6 +1,7 @@
+
 // CRangeSensor.cpp
 //
-// MTRX3760 Lab 2 - A1, Wall Follower
+// MTRX3760 Lab 2 - A5, Noise Bonus
 // Written by SID 540700701 and SID <PARTNER SID>
 // Practical section: <SECTION>
 //
@@ -10,8 +11,7 @@
 #include "CGeometry.h"
 #include "CPalette.h"
 
-// Beyond this range the sensor reports "nothing there" rather than a huge
-// distance value that would destabilise the control loop.
+//---Beyond this the sensor reports "nothing there" rather than a distance---
 const float CRangeSensor::MaxRange = 250.0f;
 
 CRangeSensor::CRangeSensor( float aMountAngleRadians, float aMountDistance )
@@ -31,8 +31,6 @@ void CRangeSensor::Sense( const CWorld& arWorld, const CPose& arRobotPose )
     const float Raw = arWorld.DistanceToWallAlong( PositionFor( arRobotPose ),
                                                    HeadingFor( arRobotPose ) );
 
-    // Any reading beyond the sensor's practical limit is treated as "nothing
-    // found" rather than some giant number that would destabilise the controller.
     mDistance = ( Raw > MaxRange ) ? MaxRange : Raw;
 }
 
@@ -49,6 +47,7 @@ bool CRangeSensor::IsAtMaxRange() const
 // Drawn as a beam from the sensor to whatever it found, with a dot at the far
 // end when that is a real wall. Seeing the beams is the quickest way to tell
 // whether a steering problem is the controller or the sensing.
+
 void CRangeSensor::Draw( CRender& arRender, const CPose& arRobotPose ) const
 {
     const Vec2D Origin = PositionFor( arRobotPose );
