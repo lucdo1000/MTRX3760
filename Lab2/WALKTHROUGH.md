@@ -665,8 +665,8 @@ marks outside the code are in it. State as of 7 September:
 1. **Join the Lab 2 Canvas group.** Lab 2 uses a different group set from Lab 1,
    and you are not in one yet. The submission is a single group submission.
 2. **Fill in the file headers.** Every file says
-   `Written by SID 540700701 and SID <PARTNER SID>` and
-   `Practical section: <SECTION>`. Both placeholders need filling.
+   `Written by SID 540700701 and SID 530838753` and
+   `Practical section: Practical Session 2`. Both placeholders need filling.
 
 The SID attribution is deliberate. Lec 1B asks for your **name** in every file
 header, but the handout requires the report — which contains your code appendix —

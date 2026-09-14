@@ -2,8 +2,8 @@
 // CWorld.h
 //
 // MTRX3760 Lab 2 - A5, Noise Bonus
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
+// Written by SID 540700701 and SID 530838753
+// Practical section: Practical Session 2
 //
 //
 // Everything the robots drive around in: the walls of the room and the line

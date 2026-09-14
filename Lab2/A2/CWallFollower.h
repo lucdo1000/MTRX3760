@@ -2,8 +2,8 @@
 // CWallFollower.h
 //
 // MTRX3760 Lab 2 - A2, Wall Follower and Line Follower
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
+// Written by SID 540700701 and SID 530838753
+// Practical section: Practical Session 2
 //
 //
 // A robot that drives around a room keeping the wall on its right.

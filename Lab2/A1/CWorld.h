@@ -2,8 +2,8 @@
 // CWorld.h
 //
 // MTRX3760 Lab 2 - A1, Wall Follower
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
+// Written by SID 540700701 and SID 530838753
+// Practical section: Practical Session 2
 //
 //
 // The room the robot drives around: one closed loop of straight walls, read

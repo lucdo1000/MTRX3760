@@ -2,8 +2,8 @@
 // CRangeSensor.h
 //
 // MTRX3760 Lab 2 - A5, Noise Bonus
-// Written by SID 540700701 and SID <PARTNER SID>
-// Practical section: <SECTION>
+// Written by SID 540700701 and SID 530838753
+// Practical section: Practical Session 2
 //
 //
 // A sensor that reports how far it is to the first wall along the direction it
